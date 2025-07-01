@@ -1,15 +1,24 @@
 {
   "name": "watchly-app",
   "version": "1.0.0",
-  "description": "video watching app",
+  "description": "Backend of video watching app",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
   },
   "keywords": [
     "JavaScript",
     "Backend"
   ],
   "author": "Abdullah Abu Bakar",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "mongoose": "^8.16.1"
+  }
 }
