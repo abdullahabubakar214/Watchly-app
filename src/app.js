@@ -17,4 +17,13 @@ app.use(express.static("public"));
 
 app.use(cookieParser());
 
+//import router
+import userRouter from "./routes/user.routes.js";
+
+//routes declaration
+
+app.use("/api/v1/users", userRouter);
+console.log("User router mounted on /api/v1/users");
+
+//http://localhost:8000/api/v1/users/register
 export { app };

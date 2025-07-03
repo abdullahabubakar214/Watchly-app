@@ -1,9 +1,7 @@
 import dotenv from "dotenv";
-// import mongoose from "mongoose";
-// import { DB_NAME } from "./constants";
 import connectDB from "./db/db_connection.js";
 import express from "express";
-
+ 
 const app = express();
 
 dotenv.config({
@@ -19,7 +17,10 @@ connectDB()
   .catch((err) => {
     console.log("MONGO db connection failed !!!", err);
   });
+
 /*
+// import mongoose from "mongoose";
+// import { DB_NAME } from "./constants";
 //IIFE : It is a JavaScript function that is defined and executed immediately after it is created.
 ;(async () => {
   try {
