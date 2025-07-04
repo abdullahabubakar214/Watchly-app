@@ -19,7 +19,7 @@ const registerUser = asyncHandler(async (req, res) => {
   //we can get form or json data from req.body
   //extract data by destructring
   const { fullName, email, username, password } = req.body;
-  console.log("email", email);
+  // console.log("email", email);
 
   //vatlidation
   if (
@@ -29,23 +29,32 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   //check user already exist
-  const userExisted = User.findOne({
+  const userExisted = await User.findOne({
     $or: [{ username }, { email }],
   });
-
-  console.log("user existed", userExisted);
 
   if (userExisted) {
     throw new ApiError(406, "User with these credentials already exist");
   }
 
   //check for image and check for avatar
-  const avartarLocalPath = req.files?.avatar[0].path;
-  const coverImageLocalPath = req.files?.coverImage[0].path;
+  const avartarLocalPath = req.files?.avatar[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    coverImageLocalPath = req.files.coverImage[0].path;
+  }
 
   if (!avartarLocalPath) {
     throw new ApiError(400, "Avatar file is required");
   }
+  // console.log("Avatar Path:", avartarLocalPath);
+  // console.log("Cover Path:", coverImageLocalPath);
 
   //upload them to cloudary, avatar
   const avatar = await uploadOnCloudinary(avartarLocalPath);
@@ -60,14 +69,14 @@ const registerUser = asyncHandler(async (req, res) => {
     fullName,
     email,
     password,
-    username: username.tolowerCase(),
+    username: username.toLowerCase(),
     coverImage: coverImage?.url || "",
     avatar: avatar.url,
   });
   //check for user creation
   //remove password and refresh token field from response
   const createdUser = await User.findById(user._id).select(
-    "-password -refreshTocken",
+    "-password -refreshToken",
   );
 
   if (!createdUser) {
