@@ -226,7 +226,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { accessToken, refreshToken: newrefreshToken },
+          { accessToken, newrefreshToken },
           " Access Token refreshed",
         ),
       );
@@ -238,7 +238,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const changeCurrentPassword = asyncHandler(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user?._id);
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
   if (!isPasswordCorrect) {
@@ -292,7 +292,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Error while Updating avatar file on cloudinary");
   }
 
-  const user = User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -346,7 +346,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 
   const channel = await User.aggregate([
     {
-      // for Filter data
+      // for Filter user
       $match: {
         username: username?.toLowerCase(),
       },
@@ -354,7 +354,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     //for left-join fields(one-to-one)
     {
       $lookup: {
-        from: subscriptions,
+        from: "subscriptions",
         localField: "_id",
         foreignField: "channel",
         as: "subscribers",
@@ -362,13 +362,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     },
     {
       $lookup: {
-        from: subscriptions,
+        from: "subscriptions",
         localField: "_id",
         foreignField: "subscriber",
         as: "subscribedto",
       },
     },
-    //add new fiels in user
+    //add new fields in user
     {
       $addFields: {
         subscribersCount: {
