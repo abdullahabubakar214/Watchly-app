@@ -15,20 +15,20 @@ const videoSchema = new Schema(
       type: String,
       required: true,
     },
-    discription: {
+    description: {
       type: String,
       required: true,
     },
     duration: {
       type: Number,
-      required: true,
+      // required: false,
     },
     views: {
       type: Number,
       default: 0,
     },
     isPublished: {
-      type: Boolen,
+      type: Boolean,
       default: 0,
     },
     owner: {
